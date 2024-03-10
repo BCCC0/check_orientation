@@ -35,6 +35,25 @@ models = {
     ),
 }
 
+
+class InferenceDataset(Dataset):
+    def __init__(self, file_paths: List[Path], transform: albu.Compose) -> None:
+        self.file_paths = file_paths
+        self.transform = transform
+
+    def __len__(self) -> int:
+        return len(self.file_paths)
+
+    def __getitem__(self, idx: int) -> Optional[Dict[str, Any]]:
+        image_path = self.file_paths[idx]
+
+        image = load_rgb(image_path)
+
+        image = self.transform(image=image)["image"]
+
+        return {"torched_image": tensor_from_rgb_image(image), "image_path": str(image_path)}
+        
+
 def load_rgb(image_path) -> np.array:
     """Load RGB image from path.
 
