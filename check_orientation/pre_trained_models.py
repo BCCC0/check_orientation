@@ -71,6 +71,11 @@ def load_rgb(image_path) -> np.array:
 
     raise FileNotFoundError(f"File not found {image_path}")
 
+def tensor_from_rgb_image(image: np.ndarray) -> torch.Tensor:
+    image = np.ascontiguousarray(np.transpose(image, (2, 0, 1)))
+    return torch.from_numpy(image)
+
+
 def rename_layers(state_dict: Dict[str, Any], rename_in_layers: Dict[str, Any]) -> Dict[str, Any]:
     result = {}
     for key, value in state_dict.items():
