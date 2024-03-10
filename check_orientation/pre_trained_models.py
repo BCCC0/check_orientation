@@ -37,9 +37,8 @@ models = {
 
 
 class InferenceDataset(Dataset):
-    def __init__(self, file_paths: List[Path], transform: albu.Compose) -> None:
+    def __init__(self, file_paths: List[Path]) -> None:
         self.file_paths = file_paths
-        self.transform = transform
 
     def __len__(self) -> int:
         return len(self.file_paths)
