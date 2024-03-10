@@ -39,6 +39,7 @@ models = {
 class InferenceDataset(Dataset):
     def __init__(self, file_paths: List[Path]) -> None:
         self.file_paths = file_paths
+        self.transform = albu.Compose([albu.Resize(height=224, width=224), albu.Normalize(p=1)], p=1)
 
     def __len__(self) -> int:
         return len(self.file_paths)
@@ -47,8 +48,7 @@ class InferenceDataset(Dataset):
         image_path = self.file_paths[idx]
 
         image = load_rgb(image_path)
-
-        # image = self.transform(image=image)["image"]
+        image = self.transform(image=image)["image"]
 
         return {"torched_image": tensor_from_rgb_image(image), "image_path": str(image_path)}
         
