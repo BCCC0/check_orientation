@@ -10,31 +10,13 @@ import torch.utils.data
 import torch.utils.data.distributed
 import yaml
 from albumentations.core.serialization import from_dict
-# from iglovikov_helper_functions.config_parsing.utils import object_from_dict
-# from iglovikov_helper_functions.dl.pytorch.utils import (
-#     state_dict_from_disk,
-#     tensor_from_rgb_image,
-# )
-# from iglovikov_helper_functions.utils.image_utils import load_rgb
+
 from torch import nn
 from torch.utils.data import Dataset
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
 
-
-# def get_args():
-#     parser = argparse.ArgumentParser()
-#     arg = parser.add_argument
-#     arg("-i", "--input_path", type=Path, help="Path with images.", required=True)
-#     arg("-c", "--config_path", type=Path, help="Path to config.", required=True)
-#     arg("-o", "--output_path", type=Path, help="Path to save masks.", required=True)
-#     arg("-b", "--batch_size", type=int, help="batch_size", default=1)
-#     arg("-j", "--num_workers", type=int, help="num_workers", default=4)
-#     arg("-w", "--weight_path", type=str, help="Path to weights.", required=True)
-#     arg("--world_size", default=-1, type=int, help="number of nodes for distributed training")
-#     arg("--local_rank", default=-1, type=int, help="node rank for distributed training")
-#     arg("--fp16", action="store_true", help="Use fp6")
-#     return parser.parse_args()
+from check_orientation.pre_trained_models import create_model
 
 
 def load_rgb(image_path: Union[Path, str]) -> np.array:
@@ -73,8 +55,9 @@ class InferenceDataset(Dataset):
         return {"torched_image": tensor_from_rgb_image(image), "image_path": str(image_path)}
 
 
-def main(model, input_path, output_path, batch_size=1, num_workers=4):
+def main(input_path, output_path, batch_size=1, num_workers=4):
     # torch.distributed.init_process_group(backend="nccl")
+    model = create_model("swsl_resnext50_32x4d")
 
     with open(args.config_path) as f:
         hparams = yaml.load(f, Loader=yaml.SafeLoader)
