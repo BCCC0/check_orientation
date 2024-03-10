@@ -125,7 +125,7 @@ def main(input_path, output_path, batch_size=1, num_workers=4):
 
     dataset = InferenceDataset(file_paths)
 
-    sampler = DistributedSampler(dataset, shuffle=False)
+    # sampler = DistributedSampler(dataset, shuffle=False)
 
     dataloader = torch.utils.data.DataLoader(
         dataset,
@@ -134,7 +134,7 @@ def main(input_path, output_path, batch_size=1, num_workers=4):
         pin_memory=True,
         shuffle=False,
         drop_last=False,
-        sampler=sampler,
+        # sampler=sampler,
     )
 
     predict(dataloader, model, output_path, device)
