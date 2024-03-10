@@ -1,5 +1,6 @@
 from collections import namedtuple
 from typing import Optional, Dict, Any
+import re
 
 from timm import create_model as timm_create_model
 from torch import nn
