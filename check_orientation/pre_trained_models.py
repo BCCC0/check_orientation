@@ -49,7 +49,7 @@ class InferenceDataset(Dataset):
 
         image = load_rgb(image_path)
 
-        image = self.transform(image=image)["image"]
+        # image = self.transform(image=image)["image"]
 
         return {"torched_image": tensor_from_rgb_image(image), "image_path": str(image_path)}
         
