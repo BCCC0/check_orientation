@@ -98,27 +98,8 @@ def create_model(model_name: str, activation: Optional[str] = "softmax") -> nn.M
     return model
 
 def main(input_path, output_path, batch_size=1, num_workers=4):
-    # torch.distributed.init_process_group(backend="nccl")
     model = create_model("swsl_resnext50_32x4d").to("cuda")
-    output_path = Path(output_path)
     input_path = Path(input_path)
-
-    # with open(args.config_path) as f:
-    #     hparams = yaml.load(f, Loader=yaml.SafeLoader)
-
-    # hparams.update(
-    #     {
-    #         "local_rank": args.local_rank,
-    #         "fp16": args.fp16,
-    #     }
-    # )
-
-    output_path.mkdir(parents=True, exist_ok=True)
-    corrections: Dict[str, str] = {"model.": ""}
-
-    # model = torch.nn.parallel.DistributedDataParallel(
-    #     model, device_ids=[args.local_rank], output_device=args.local_rank
-    # )
 
     file_paths = []
 
@@ -126,11 +107,9 @@ def main(input_path, output_path, batch_size=1, num_workers=4):
         file_paths += sorted(input_path.rglob(regexp))
 
     # Filter file paths for which we already have predictions
-    file_paths = [x for x in file_paths if not (output_path / x.parent.name / f"{x.stem}.txt").exists()]
+    # file_paths = [x for x in file_paths if not (output_path / x.parent.name / f"{x.stem}.txt").exists()]
 
     dataset = InferenceDataset(file_paths)
-
-    # sampler = DistributedSampler(dataset, shuffle=False)
 
     dataloader = torch.utils.data.DataLoader(
         dataset,
@@ -139,17 +118,15 @@ def main(input_path, output_path, batch_size=1, num_workers=4):
         pin_memory=True,
         shuffle=False,
         drop_last=False,
-        # sampler=sampler,
     )
+    
+    return predict(dataloader, model)
 
-    predict(dataloader, model, output_path)
 
-
-def predict(dataloader, model, output_path):
+def predict(dataloader, model):
     model.eval()
-
     loader = tqdm(dataloader)
-
+    res = {}
     with torch.no_grad():
         for batch in loader:
             torched_images = batch["torched_image"]  # images that are rescaled and padded
@@ -158,18 +135,12 @@ def predict(dataloader, model, output_path):
 
             batch_size = torched_images.shape[0]
 
-            predictions = model(torched_images.float().to('cuda'))
+            predictions = torch.argmax(model(torched_images.float().to('cuda')), axis = -1).cpu().numpy()
 
             for batch_id in range(batch_size):
-                file_id = Path(image_paths[batch_id]).stem
-                folder_name = Path(image_paths[batch_id]).parent.name
-
-                prob = predictions[batch_id].cpu().numpy().astype(np.float16)
-
-                (output_path / folder_name).mkdir(exist_ok=True, parents=True)
-
-                with open(str(output_path / folder_name / f"{file_id}.txt"), "w") as f:
-                    f.write(str(prob.tolist()))
-                
+                # prob = predictions[batch_id].cpu().numpy().astype(np.float16)
+                res[str(image_paths[batch_id])] = predictions[batch_id]
+            
+    return res
 
 
