@@ -16,8 +16,6 @@ from torch.utils.data import Dataset
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
 
-from check_orientation.pre_trained_models import create_model
-
 
 def load_rgb(image_path: Union[Path, str]) -> np.array:
     """Load RGB image from path.
@@ -55,7 +53,7 @@ class InferenceDataset(Dataset):
         return {"torched_image": tensor_from_rgb_image(image), "image_path": str(image_path)}
 
 
-def check_orientation_main(input_path, output_path, batch_size=1, num_workers=4):
+def main(input_path, output_path, batch_size=1, num_workers=4):
     # torch.distributed.init_process_group(backend="nccl")
     model = create_model("swsl_resnext50_32x4d")
 
