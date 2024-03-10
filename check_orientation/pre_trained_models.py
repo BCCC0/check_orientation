@@ -158,7 +158,7 @@ def predict(dataloader, model, output_path):
 
             batch_size = torched_images.shape[0]
 
-            predictions = model(torched_images.to('cuda'))
+            predictions = model(torched_images.float().to('cuda'))
 
             for batch_id in range(batch_size):
                 file_id = Path(image_paths[batch_id]).stem
