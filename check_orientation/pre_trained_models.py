@@ -100,10 +100,10 @@ def main(input_path, output_path, batch_size=1, num_workers=4):
     file_paths = []
 
     for regexp in ["*.jpg", "*.png", "*.jpeg", "*.JPG"]:
-        file_paths += sorted(args.input_path.rglob(regexp))
+        file_paths += sorted(input_path.rglob(regexp))
 
     # Filter file paths for which we already have predictions
-    file_paths = [x for x in file_paths if not (args.output_path / x.parent.name / f"{x.stem}.txt").exists()]
+    file_paths = [x for x in file_paths if not (output_path / x.parent.name / f"{x.stem}.txt").exists()]
 
     dataset = InferenceDataset(file_paths)
 
