@@ -1,7 +1,6 @@
 from collections import namedtuple
 from typing import Optional
 
-from iglovikov_helper_functions.dl.pytorch.utils import rename_layers
 from timm import create_model as timm_create_model
 from torch import nn
 from torch.utils import model_zoo
@@ -15,6 +14,15 @@ models = {
     ),
 }
 
+def rename_layers(state_dict: Dict[str, Any], rename_in_layers: Dict[str, Any]) -> Dict[str, Any]:
+    result = {}
+    for key, value in state_dict.items():
+        for key_r, value_r in rename_in_layers.items():
+            key = re.sub(key_r, value_r, key)
+
+        result[key] = value
+
+    return result
 
 def create_model(model_name: str, activation: Optional[str] = "softmax") -> nn.Module:
     model = models[model_name].model
