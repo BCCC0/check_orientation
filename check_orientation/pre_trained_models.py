@@ -26,8 +26,6 @@ from torch.utils.data import Dataset
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
 
-from check_orientation.pre_trained_models import create_model
-
 model = namedtuple("model", ["url", "model"])
 
 models = {
