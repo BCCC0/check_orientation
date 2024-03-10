@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 
 from timm import create_model as timm_create_model
 from torch import nn
