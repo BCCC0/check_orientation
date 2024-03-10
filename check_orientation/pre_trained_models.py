@@ -35,7 +35,7 @@ models = {
     ),
 }
 
-def load_rgb(image_path: Union[Path, str]) -> np.array:
+def load_rgb(image_path) -> np.array:
     """Load RGB image from path.
 
     Args:
