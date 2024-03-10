@@ -137,10 +137,10 @@ def main(input_path, output_path, batch_size=1, num_workers=4):
         # sampler=sampler,
     )
 
-    predict(dataloader, model, output_path, device)
+    predict(dataloader, model, output_path)
 
 
-def predict(dataloader, model, output_path, device):
+def predict(dataloader, model, output_path):
     model.eval()
 
     loader = tqdm(dataloader)
@@ -163,7 +163,7 @@ def predict(dataloader, model, output_path, device):
 
                 (output_path / folder_name).mkdir(exist_ok=True, parents=True)
 
-                with open(str(hparams["output_path"] / folder_name / f"{file_id}.txt"), "w") as f:
+                with open(str(output_path / folder_name / f"{file_id}.txt"), "w") as f:
                     f.write(str(prob.tolist()))
                 
 
