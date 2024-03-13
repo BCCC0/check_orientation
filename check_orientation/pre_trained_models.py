@@ -97,7 +97,7 @@ def create_model(model_name: str, activation: Optional[str] = "softmax") -> nn.M
 
     return model
 
-def main(input_path, output_path, batch_size=1, num_workers=4):
+def main(input_path, batch_size=2, num_workers=4):
     model = create_model("swsl_resnext50_32x4d").to("cuda")
     input_path = Path(input_path)
 
