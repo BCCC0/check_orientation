@@ -97,14 +97,15 @@ def create_model(model_name: str, activation: Optional[str] = "softmax") -> nn.M
 
     return model
 
-def main(input_path, batch_size=2, num_workers=4):
+def main(input_path, img_list, batch_size=2, num_workers=4):
     model = create_model("swsl_resnext50_32x4d").to("cuda")
     input_path = Path(input_path)
 
-    file_paths = []
+    file_paths = [input_path / i for i in img_list]
+    # file_paths = []
 
-    for regexp in ["*.jpg", "*.png", "*.jpeg", "*.JPG"]:
-        file_paths += sorted(input_path.rglob(regexp))
+    # for regexp in ["*.jpg", "*.png", "*.jpeg", "*.JPG"]:
+    #     file_paths += sorted(input_path.rglob(regexp))
 
     # Filter file paths for which we already have predictions
     # file_paths = [x for x in file_paths if not (output_path / x.parent.name / f"{x.stem}.txt").exists()]
